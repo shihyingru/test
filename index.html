@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台灣即時新聞</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      background: #f5f6f8;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #0d1b2a;
+      color: #fff;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.4);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 16px;
+    }
+    .site-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      white-space: nowrap;
+    }
+    .site-title span { color: #e63946; }
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .78rem;
+      color: #aab4c2;
+      white-space: nowrap;
+    }
+    .refresh-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4caf50;
+      display: inline-block;
+      transition: transform .3s;
+    }
+    .refresh-dot.pulsing {
+      animation: pulse 1s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.6); opacity: .5; }
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    /* ── Card grid ── */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .news-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 580px) {
+      .news-grid { grid-template-columns: 1fr; }
+      main { margin: 16px auto; padding: 0 12px; }
+      .site-title { font-size: 1.1rem; }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      display: flex;
+      flex-direction: column;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+    .card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: #e8edf2;
+    }
+    .card-img.error { opacity: .4; }
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .badge {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      padding: 3px 9px;
+      border-radius: 20px;
+      color: #fff;
+      white-space: nowrap;
+    }
+    .badge-udn        { background: #e63946; }
+    .badge-ettoday    { background: #2196f3; }
+    .badge-chinatimes { background: #ff9800; }
+    .time-label {
+      font-size: .75rem;
+      color: #8892a0;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-summary {
+      font-size: .85rem;
+      color: #4a5568;
+      line-height: 1.6;
+      flex: 1;
+    }
+    .read-btn {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 7px 16px;
+      border-radius: 8px;
+      background: #0d1b2a;
+      color: #fff;
+      font-size: .8rem;
+      font-family: inherit;
+      font-weight: 500;
+      text-decoration: none;
+      text-align: center;
+      transition: background .2s;
+    }
+    .read-btn:hover { background: #1e3a5f; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 2px solid #dde3ec;
+      background: #fff;
+      font-family: inherit;
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: #4a5568;
+      transition: all .2s;
+    }
+    .filter-btn:hover { border-color: #0d1b2a; color: #0d1b2a; }
+    .filter-btn.active { background: #0d1b2a; border-color: #0d1b2a; color: #fff; }
+    .filter-btn.active.udn        { background: #e63946; border-color: #e63946; }
+    .filter-btn.active.ettoday    { background: #2196f3; border-color: #2196f3; }
+    .filter-btn.active.chinatimes { background: #ff9800; border-color: #ff9800; }
+
+    /* ── Card accent border ── */
+    .card { border-top: 3px solid transparent; }
+    .card[data-source="udn"]        { border-top-color: #e63946; }
+    .card[data-source="ettoday"]    { border-top-color: #2196f3; }
+    .card[data-source="chinatimes"] { border-top-color: #ff9800; }
+
+    /* ── Empty / error state ── */
+    .state-msg {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px 20px;
+      color: #8892a0;
+      font-size: 1rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: .75rem;
+      color: #aab4c2;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="site-title">🗞 台灣<span>即時</span>新聞</div>
+    <div class="header-meta">
+      <span class="refresh-dot" id="dot"></span>
+      <span id="updated-label">載入中…</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="filter-bar" id="filters">
+    <button class="filter-btn active" data-filter="all">全部</button>
+    <button class="filter-btn udn" data-filter="udn">聯合新聞網</button>
+    <button class="filter-btn ettoday" data-filter="ettoday">ETtoday</button>
+  </div>
+  <div class="news-grid" id="grid">
+    <div class="state-msg">⏳ 新聞載入中，請稍候…</div>
+  </div>
+</main>
+
+<footer>資料來源：聯合新聞網、ETtoday 新聞雲 ｜ 每5分鐘自動更新</footer>
+
+<script>
+  const REFRESH_MS = 5 * 60 * 1000;
+  const SOURCE_BADGES = {
+    udn:        { label: '聯合新聞網',    cls: 'badge-udn' },
+    ettoday:    { label: 'ETtoday 新聞雲', cls: 'badge-ettoday' },
+    chinatimes: { label: '中時新聞網',    cls: 'badge-chinatimes' },
+  };
+  const FALLBACK_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225'%3E%3Crect fill='%23e8edf2' width='400' height='225'/%3E%3Ctext x='50%25' y='50%25' fill='%23aab4c2' font-size='18' text-anchor='middle' dominant-baseline='middle'%3E暫無圖片%3C/text%3E%3C/svg%3E";
+
+  function relTime(iso) {
+    const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60)   return `${Math.round(diff)}秒前`;
+    if (diff < 3600) return `${Math.round(diff/60)}分鐘前`;
+    if (diff < 86400)return `${Math.round(diff/3600)}小時前`;
+    return `${Math.round(diff/86400)}天前`;
+  }
+
+  function buildCard(item) {
+    const badge = SOURCE_BADGES[item.source_id] || { label: item.source, cls: '' };
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.dataset.source = item.source_id;
+    card.innerHTML = `
+      <img class="card-img"
+           src="${escHtml(item.image_url || '')}"
+           alt="${escHtml(item.title)}"
+           loading="lazy"
+           onerror="this.src='${FALLBACK_IMG}';this.classList.add('error')"/>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="badge ${escHtml(badge.cls)}">${escHtml(badge.label)}</span>
+          <span class="time-label">${relTime(item.published_at)}</span>
+        </div>
+        <h2 class="card-title">${escHtml(item.title)}</h2>
+        <p class="card-summary">${escHtml(item.summary)}</p>
+        <a class="read-btn" href="${escHtml(item.link)}" target="_blank" rel="noopener">閱讀全文</a>
+      </div>`;
+    return card;
+  }
+
+  function escHtml(s) {
+    return String(s ?? '')
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  function setUpdated(ts) {
+    const d = ts ? new Date(ts) : new Date();
+    const fmt = d.toLocaleString('zh-TW', {
+      month:'numeric', day:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+    document.getElementById('updated-label').textContent = `更新：${fmt}`;
+  }
+
+  async function loadNews() {
+    const dot = document.getElementById('dot');
+    const grid = document.getElementById('grid');
+    dot.classList.add('pulsing');
+
+    try {
+      const res = await fetch(`data/news.json?t=${Date.now()}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const items = await res.json();
+
+      grid.innerHTML = '';
+      if (!items.length) {
+        grid.innerHTML = '<div class="state-msg">目前沒有新聞資料</div>';
+      } else {
+        items.forEach(item => grid.appendChild(buildCard(item)));
+      }
+      setUpdated(new Date().toISOString());
+    } catch (e) {
+      grid.innerHTML = `<div class="state-msg">⚠️ 無法載入新聞：${escHtml(e.message)}</div>`;
+    } finally {
+      dot.classList.remove('pulsing');
+    }
+  }
+
+  // Source filter
+  let activeFilter = 'all';
+  document.getElementById('filters').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    activeFilter = btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.card').forEach(card => {
+      card.style.display = (activeFilter === 'all' || card.dataset.source === activeFilter) ? '' : 'none';
+    });
+  });
+
+  loadNews();
+  setInterval(loadNews, REFRESH_MS);
+</script>
+
+</body>
+</html>
