@@ -1,19 +1,19 @@
 # 台灣即時新聞聚合網站
-### Taiwan Real-Time News Aggregator
+### Taiwan Real-Time News Aggregator — Intelligence Dashboard
 
 > Built by a 4-agent Claude Code team from a single Discord prompt.
 
 🌐 **Live site**: https://shihyingru.github.io/test/
-📦 **Pull Request**: https://github.com/shihyingru/test/pull/2
-⏱ **Build time**: ~8 minutes
+📦 **Pull Request**: (see latest PR on GitHub)
+⏱ **Build time**: ~10 minutes
 
 ---
 
 ## 專案概覽 / Overview
 
-A real-time news aggregator dashboard for Taiwan, styled after intelligence
-monitoring interfaces. Displays live-crawled headlines from UDN and ETtoday
-alongside 3 YouTube live news streams.
+A real-time Taiwan news intelligence dashboard styled after monitoring interfaces
+(inspired by WorldMonitor). Displays live-crawled headlines from UDN and ETtoday
+alongside an interactive SVG Taiwan Strait map and 3 YouTube live news streams.
 
 ---
 
@@ -30,9 +30,12 @@ Claude Code (GCP VM / Claude Desktop)
      │
      ├──► coder-agent    →  index.html
      │         Single-file HTML + CSS + JS
+     │         Dark intelligence dashboard layout
      │
      ├──► ui-agent       →  index.html (polished)
-     │         Noto Sans TC · Responsive grid
+     │         Noto Sans TC · Share Tech Mono
+     │         Scanlines · Cyan glowing accents
+     │         Pulsing SVG map markers
      │
      └──► docs-agent     →  README.md + GitHub PR
                gh pr create --base main
@@ -51,6 +54,18 @@ Claude Code (GCP VM / Claude Desktop)
 | Data | data/news.json · 5-minute auto-refresh |
 | Deploy | GitHub Pages · Auto PR via `gh` CLI |
 | Control | Discord → Claude Code → Agent Team |
+
+---
+
+## 介面設計 / UI Design
+
+- **Dark theme**: `#0a0f1a` background, cyan `#00b4ff` accents
+- **Scanline overlay**: CSS `repeating-linear-gradient` over entire background
+- **3-panel fixed layout**: left news feed (280px) · center SVG map · right stats (300px)
+- **Fonts**: `Share Tech Mono` for data/timestamps · `Noto Sans TC` for Chinese text
+- **Taiwan Strait SVG map**: animated radar sweep, pulsing ADIZ markers, vessel positions
+- **Bottom strip**: scrolling news ticker + 3 YouTube live stream iframes
+- **Real-time CST clock** (UTC+8)
 
 ---
 
