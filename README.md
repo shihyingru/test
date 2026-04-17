@@ -1,19 +1,20 @@
 # 台灣即時新聞聚合網站
-### Taiwan Real-Time News Aggregator
+### Taiwan Real-Time News Aggregator — Intelligence Dashboard
 
 > Built by a 4-agent Claude Code team from a single Discord prompt.
 
 🌐 **Live site**: https://shihyingru.github.io/test/
-📦 **Pull Request**: https://github.com/shihyingru/test/pull/2
-⏱ **Build time**: ~8 minutes
+📦 **Pull Request**: https://github.com/shihyingru/test/pull/4
+⏱ **Build time**: ~12 minutes
 
 ---
 
 ## 專案概覽 / Overview
 
-A real-time news aggregator dashboard for Taiwan, styled after intelligence
-monitoring interfaces. Displays live-crawled headlines from UDN and ETtoday
-alongside 3 YouTube live news streams.
+A real-time Taiwan news intelligence dashboard styled after WorldMonitor-class monitoring
+interfaces. Displays live-crawled headlines from UDN and ETtoday inside a dark
+`#03070f` three-panel layout with an animated Taiwan Strait SVG map, threat-index stats,
+and 3 YouTube live news streams.
 
 ---
 
@@ -30,9 +31,13 @@ Claude Code (GCP VM / Claude Desktop)
      │
      ├──► coder-agent    →  index.html
      │         Single-file HTML + CSS + JS
+     │         Dark intelligence dashboard · 3-panel grid
+     │         SVG Taiwan Strait map · radar sweep · pulsing markers
      │
      ├──► ui-agent       →  index.html (polished)
-     │         Noto Sans TC · Responsive grid
+     │         Rajdhani · Share Tech Mono · Noto Sans TC
+     │         Scanline overlay · loading boot sequence
+     │         Ticker bar · iframe fallback detection
      │
      └──► docs-agent     →  README.md + GitHub PR
                gh pr create --base main
@@ -51,6 +56,22 @@ Claude Code (GCP VM / Claude Desktop)
 | Data | data/news.json · 5-minute auto-refresh |
 | Deploy | GitHub Pages · Auto PR via `gh` CLI |
 | Control | Discord → Claude Code → Agent Team |
+
+---
+
+## 介面設計 / UI Design
+
+| Element | Spec |
+|---------|------|
+| Background | `#03070f` with 40px cyan grid overlay |
+| Scanline overlay | `body::before` repeating-linear-gradient |
+| Layout | Fixed 3-panel: 280px · 1fr · 300px + 220px bottom + 44px top + 24px ticker |
+| Primary font | Rajdhani (headings/numbers) |
+| Data font | Share Tech Mono (timestamps, coordinates, codes) |
+| Chinese font | Noto Sans TC |
+| Accent color | `#00b4ff` cyan |
+| Map | SVG Taiwan Strait with animated radar sweep + pulsing event markers |
+| Loading screen | Boot sequence overlay with progress bar |
 
 ---
 
